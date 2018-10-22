@@ -10,13 +10,14 @@ To start the express server run
 3. To run test coverage by Istanabul run yarn test --coverage
 
 The server will start by default at 8080 port if there is no node environment port set.
+For local application will serve from
+http://localhost:8080/
 
 To gather important statistics during production please go to the url
 [url hosted]/api/status
 
-For local it will serve at
+For local to gather important statistics please go to the url
 http://localhost:8080/api/status
 
 [TODO:]
-Please note: This is for assignment purpose only and more fine tuning can be done. Containerization (docker) or Kubernatics with resource manager can be thought of for sharing resources and agent injection. Auto scaling capabilities can be configured/binded if deployed to cloud in a pool. Also, logging splunk logs and .jenkins files needs to be there so that jenkins builds run smoothly for deployment(if using jenkins).
- 
+Please note: This is for assignment purpose only and more fine tuning can be done. Containerization (docker) or Kubernatics with resource manager can be thought of for sharing resources and agent injection. Auto scaling capabilities can be configured/binded if deployed to cloud in a pool. Also, logging splunk logs and .jenkins files needs to be there so that jenkins builds run smoothly for deployment(if using jenkins). 
