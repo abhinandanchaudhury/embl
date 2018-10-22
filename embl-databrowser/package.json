@@ -14,9 +14,8 @@
     "source-map-explorer": "^1.6.0"
   },
   "scripts": {
-    "start:server": "node server",
+    "start": "node server",
     "analyze": "source-map-explorer build/static/js/main.*",
-    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -32,6 +31,8 @@
   ],
   "devDependencies": {
     "axios-mock-adapter": "^1.15.0",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
     "expect": "^23.6.0",
     "expect-jsx": "^5.0.0",
     "react-test-renderer": "^16.5.2"

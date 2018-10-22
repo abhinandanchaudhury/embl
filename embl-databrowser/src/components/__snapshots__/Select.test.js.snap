@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test the Select Component Snapshot testing 1`] = `
+<select
+  className="form-control"
+  defaultValue="homo_sapiens"
+  grouping={null}
+  id="species"
+  onChange={[Function]}
+  options={
+    Array [
+      Object {
+        "display_name": "Human",
+        "name": "homo_sapiens",
+      },
+    ]
+  }
+  placeholder="Please select the species"
+  selected="homo_sapiens"
+>
+  <option>
+    Please select the species
+  </option>
+  <option
+    value="homo_sapiens"
+  >
+    Human
+     [ 
+    homo_sapiens
+     ]
+  </option>
+</select>
+`;

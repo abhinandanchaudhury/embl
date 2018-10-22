@@ -6,8 +6,9 @@
 # testing
 /coverage
 
-# production
-/build
+#idea-generated
+.idea
+*.iml
 
 # misc
 .DS_Store

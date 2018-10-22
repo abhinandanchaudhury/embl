@@ -16,14 +16,14 @@ class Select extends Component {
     getOptions() {
         var options = this.props.options;
         if (this.props.grouping) {
-          return this.getOptgroupTags(options);
+          return this.getOptgroupTags(options, this.props.grouping);
         } else {
           return this.getOptionTags(options);
         }
     }
-    getOptgroupTags(groups) {
+    getOptgroupTags(groups, propsGroup) {
         var optgroups = groups.map((group, t) => {
-          var children = this.getOptionTags(group[this.props.grouping]);
+          var children = this.getOptionTags(group[propsGroup]);
           return (
             <optgroup key={t} label={group.group}>
               {children}
