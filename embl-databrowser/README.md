@@ -2,8 +2,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Below you will find some information on how to perform common tasks.<br>
 
-To start the express server run
-1. Expected node version to be greater than 6, > 8 is recommended.
+Information:
+1. Expected node version installed to be greater than 6, > 8 is recommended.
 2. Install dependencies by running npm install
 3. npm start or yarn start - to start the express server (yarn to be installed globally).
 2. To run unit test run yarn test (ALL test cases are not covered due to lack of time).
