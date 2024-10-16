@@ -62,10 +62,11 @@ function contrastRatio(fg: [number, number, number], bg: [number, number, number
 // Convert RGB to hex
 function rgbToHex(rgb: [number, number, number]): string {
     return `#${rgb.map(v => {
-        const hex = Math.round(v).toString(16);
+        const hex = Math.round(v).toString(16).padStart(2, '0'); // Ensure two digits
         return hex.length === 1 ? `0${hex}` : hex;
     }).join('')}`;
 }
+
 
 // Generate HSL color variations
 function generateColorVariations(color: string): string[] {
@@ -123,6 +124,8 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
     if (s === 0) { // achromatic
         r = g = b = l * 255; 
     } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
         const hue2rgb = (p: number, q: number, t: number) => {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -131,28 +134,47 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
             if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
             return p;
         };
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
         r = hue2rgb(p, q, h / 360 + 1 / 3);
         g = hue2rgb(p, q, h / 360);
         b = hue2rgb(p, q, h / 360 - 1 / 3);
     }
-    return [r * 255, g * 255, b * 255];
+
+    // Clamp RGB values to 0-255 range
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
+
 
 // Get a range of contrasting colors
 export function getContrastingColors(color: string): string[] {
     const backgroundColor = hexToRgb(color);
     const contrastRatios: { color: string; ratio: number }[] = [];
 
-    // Generate color variations based on the selected color
-    const colorVariations = generateColorVariations(color);
-    
-    for (const hexColor of colorVariations) {
-        const rgbColor = hexToRgb(hexColor);
-        const contrast = contrastRatio(backgroundColor, rgbColor);
-        if (contrast >= contrastThreshold) {
+    // Handle edge cases for pure black and pure white
+    if (color.toLowerCase() === '#ffffff') {
+        // For white, provide dark shades
+        const darkColors = ['#000000', '#333333', '#666666', '#444444', '#222222'];
+        for (const hexColor of darkColors) {
+            const rgbColor = hexToRgb(hexColor);
+            const contrast = contrastRatio(backgroundColor, rgbColor);
             contrastRatios.push({ color: hexColor, ratio: contrast });
+        }
+    } else if (color.toLowerCase() === '#000000') {
+        // For black, provide bright shades
+        const lightColors = ['#ffffff', '#ffcccc', '#ff9999', '#ffcc99', '#ffff99'];
+        for (const hexColor of lightColors) {
+            const rgbColor = hexToRgb(hexColor);
+            const contrast = contrastRatio(backgroundColor, rgbColor);
+            contrastRatios.push({ color: hexColor, ratio: contrast });
+        }
+    } else {
+        // Generate color variations based on the selected color
+        const colorVariations = generateColorVariations(color);
+        for (const hexColor of colorVariations) {
+            const rgbColor = hexToRgb(hexColor);
+            const contrast = contrastRatio(backgroundColor, rgbColor);
+            if (contrast >= contrastThreshold) {
+                contrastRatios.push({ color: hexColor, ratio: contrast });
+            }
         }
     }
 
@@ -161,6 +183,7 @@ export function getContrastingColors(color: string): string[] {
     
     return contrastRatios.slice(0, 3).map(cr => cr.color);
 }
+
 
 
 "contributes": {
