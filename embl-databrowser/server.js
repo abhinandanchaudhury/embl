@@ -29,7 +29,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 /*
 const contrastThreshold = 4.5; // WCAG recommended ratio
 
-// Convert hex to RGB
+// Convert hex color to RGB
 function hexToRgb(hex: string): [number, number, number] {
     // Normalize 3-digit hex to 6-digit hex
     if (hex.length === 4) {
@@ -74,7 +74,9 @@ function generateColorVariations(color: string): string[] {
     const variations = [];
 
     for (let i = -60; i <= 60; i += 30) { // Adjust hue by -60, -30, 0, 30, 60 degrees
-        const [h, s, l] = [hsl[0] + i, hsl[1], hsl[2]];
+        const h = (hsl[0] + i + 360) % 360; // Wrap around the hue
+        const s = hsl[1];
+        const l = Math.min(Math.max(hsl[2] + (i > 0 ? -0.1 : 0.1), 0), 1); // Slightly adjust lightness
         variations.push(hslToRgb(h, s, l));
     }
 
@@ -85,20 +87,20 @@ function generateColorVariations(color: string): string[] {
 function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
     r /= 255; g /= 255; b /= 255;
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
+    let h = 0, s = 0, l = (max + min) / 2;
 
-    if (max === min) {
-        h = s = 0; // achromatic
-    } else {
+    if (max !== min) {
         const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break; // Red is max
+            case g: h = (b - r) / d + 2; break; // Green is max
+            case b: h = (r - g) / d + 4; break; // Blue is max
         }
-        h /= 6;
+        h /= 6; // Normalize to [0, 1]
     }
+    
+    // Convert h from [0, 1] to [0, 360]
     return [h * 360, s, l];
 }
 
@@ -107,7 +109,7 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
     let r, g, b;
 
     if (s === 0) { // achromatic
-        r = g = b = l; 
+        r = g = b = l * 255; 
     } else {
         const hue2rgb = (p: number, q: number, t: number) => {
             if (t < 0) t += 1;
@@ -166,12 +168,13 @@ export function getContrastingColors(color: string): string[] {
 }
 
 import * as vscode from 'vscode';
-import { getContrastingColors, isValidColor } from './colorUtils';
+import { getContrastingColors, hexToRgb } from './colorUtils';
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('extension.recommendContrastColor', () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
+            vscode.window.showWarningMessage('No active editor found.');
             return;
         }
 
@@ -180,11 +183,15 @@ export function activate(context: vscode.ExtensionContext) {
         const selectedText = document.getText(selection).trim();
 
         // Check if the selected text is a valid color (hex only)
-        if (isValidColor(selectedText)) {
+        if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(selectedText)) {
             const contrastingColors = getContrastingColors(selectedText);
-            vscode.window.showInformationMessage(`Recommended contrasting colors: ${contrastingColors.join(', ')}`);
+            if (contrastingColors.length > 0) {
+                vscode.window.showInformationMessage(`Recommended contrasting colors: ${contrastingColors.join(', ')}`);
+            } else {
+                vscode.window.showInformationMessage('No contrasting colors found.');
+            }
         } else {
-            vscode.window.showWarningMessage('Selected text is not a valid color.');
+            vscode.window.showWarningMessage('Selected text is not a valid hex color.');
         }
     });
 
@@ -192,5 +199,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
 
 */
