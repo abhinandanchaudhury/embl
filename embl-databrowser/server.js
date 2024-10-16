@@ -73,15 +73,27 @@ function generateColorVariations(color: string): string[] {
     const hsl = rgbToHsl(r, g, b);
     const variations = [];
 
-    for (let i = -60; i <= 60; i += 30) { // Adjust hue by -60, -30, 0, 30, 60 degrees
-        const h = (hsl[0] + i + 360) % 360; // Wrap around the hue
-        const s = hsl[1];
-        const l = Math.min(Math.max(hsl[2] + (i > 0 ? -0.1 : 0.1), 0), 1); // Slightly adjust lightness
-        variations.push(hslToRgb(h, s, l));
+    const hueAdjustments = [-60, -30, 0, 30, 60]; // Adjustments to the hue
+    const lightnessAdjustments = [-0.1, 0, 0.1]; // Adjustments to the lightness
+
+    for (const hueAdjustment of hueAdjustments) {
+        for (const lightnessAdjustment of lightnessAdjustments) {
+            const h = (hsl[0] + hueAdjustment + 360) % 360; // Wrap hue around
+            const s = hsl[1]; // Keep saturation the same
+            const l = Math.min(Math.max(hsl[2] + lightnessAdjustment, 0), 1); // Clamp lightness
+
+            const rgbColor = hslToRgb(h, s, l);
+            const hexColor = rgbToHex(rgbColor);
+
+            console.log(`Generated Color Variation - HSL: (${h}, ${s}, ${l}) -> RGB: ${rgbColor} -> HEX: ${hexColor}`);
+
+            variations.push(hexColor);
+        }
     }
 
-    return variations.map(rgbToHex);
+    return variations;
 }
+
 
 // Convert RGB to HSL
 function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
